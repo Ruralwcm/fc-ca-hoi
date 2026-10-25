@@ -220,7 +220,7 @@ select{font-size:.75rem;padding:2px 4px}
 // ============ DATA & CONFIG ============
 var ASSORT=[],NCC_MAP={},STORES=[],MIN_CFG={},DELI_TABLE=[];
 var CFG={mov:{},lockDays:30,distWarnKm:10,splitFactor:2,capSafety:0.85,capWarn:1.2,huyBlockPct:30};
-var fcRows=[],saleData=[],activeFilter='all',activeHubFilter='all',recapView='ncc';
+var fcRows=[],saleData=[],activeFilter='all',activeHubFilter='all',recapView='ncc',recapFilter={};
 
 // ============ EMBEDDED DATA (injected at build) ============
 function loadEmbeddedData(){
@@ -395,6 +395,7 @@ function renderFC(){
   else if(activeFilter==='zero')rows=rows.filter(function(r){return r.risk==='zero'});
   else if(activeFilter==='waste')rows=rows.filter(function(r){return r.pct_huy>CFG.huyBlockPct/100});
   if(search)rows=rows.filter(function(r){return r.store.toLowerCase().indexOf(search)>=0||r.sp_name.toLowerCase().indexOf(search)>=0||r.name.toLowerCase().indexOf(search)>=0});
+  if(recapFilter.key&&recapFilter.fn)rows=rows.filter(recapFilter.fn);
 
   // KPI
   var tot=fcRows.length,bad=fcRows.filter(function(r){return r.risk==='bad'}).length;
@@ -479,118 +480,76 @@ function switchRecap(view){
     var grp={};
     active.forEach(function(r){
       var ncc=tinhNCC[r.huyen]||'Other';
-      if(!grp[ncc])grp[ncc]={kg:0,dh:0,sale:0,huy:0,stores:new Set(),rows:[]};
+      if(!grp[ncc])grp[ncc]={kg:0,dh:0,sale:0,huy:0,stores:new Set()};
       grp[ncc].kg+=r.kg;grp[ncc].dh+=r.dh;grp[ncc].sale+=r.sale_1w;grp[ncc].huy+=r.huy_1w;grp[ncc].stores.add(r.store);
-      grp[ncc].rows.push(r);
     });
-    th.innerHTML='<tr><th></th><th>NCC</th><th>CH</th><th>KG</th><th>ĐH</th><th>Sale</th><th>Hủy</th><th>%Hủy</th><th>MOV</th><th>Đạt?</th></tr>';
-    var sorted=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg});
-    tb.innerHTML=sorted.map(function(e,i){
-      var g=e[1],mov=CFG.mov[e[0]]?.mov_kg||0;
-      var ph=g.sale+g.huy>0?(g.huy/(g.sale+g.huy)*100):0;
-      var mok=mov>0?(g.kg>=mov?'✅':g.kg>=mov*0.8?'🟡':'🔴'):'⚪';
-      var rId='recap_'+view+'_'+i;
-      return'<tr onclick="tglRecapRow(\''+rId+'\')" style="cursor:pointer"><td>▶</td><td><b>'+e[0].substring(0,40)+'</b></td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+g.sale.toFixed(1)+'</td><td>'+g.huy.toFixed(1)+'</td><td>'+ph.toFixed(1)+'%</td><td>'+(mov||'-')+'</td><td>'+mok+'</td></tr>'+
-      '<tr id="'+rId+'" style="display:none"><td colspan="10" style="padding:6px 12px;background:#f8f9fa">'+skuSummary(g.rows,view,e[0])+'</td></tr>';
+    th.innerHTML='<tr><th>NCC</th><th>CH</th><th>KG</th><th>ĐH</th><th>Sale</th><th>Hủy</th><th>%Hủy</th><th>MOV</th><th>Đạt?</th></tr>';
+    tb.innerHTML=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg}).map(function(e){
+      var g=e[1],mov=CFG.mov[e[0]]?.mov_kg||0,ph=g.sale+g.huy>0?(g.huy/(g.sale+g.huy)*100):0;
+      return'<tr onclick="filterFCBy(\'ncc\',\''+e[0].replace(/'/g,'\\\'')+'\')" style="cursor:pointer;background:'+(recapFilter.key==='ncc_'+(e[0])?'#e8f0fe':'')+'"><td><b>'+e[0].substring(0,40)+'</b></td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+g.sale.toFixed(1)+'</td><td>'+g.huy.toFixed(1)+'</td><td>'+ph.toFixed(1)+'%</td><td>'+(mov||'-')+'</td><td>'+(mov>0?(g.kg>=mov?'✅':g.kg>=mov*0.8?'🟡':'🔴'):'⚪')+'</td></tr>';
     }).join('');
   }else if(view==='tinh'){
     var grp={};
     active.forEach(function(r){
       var t=r.huyen||'?';
-      if(!grp[t])grp[t]={kg:0,dh:0,sale:0,huy:0,stores:new Set(),ncc:'',rows:[]};
+      if(!grp[t])grp[t]={kg:0,dh:0,sale:0,huy:0,stores:new Set(),ncc:''};
       grp[t].kg+=r.kg;grp[t].dh+=r.dh;grp[t].sale+=r.sale_1w;grp[t].huy+=r.huy_1w;grp[t].stores.add(r.store);
-      grp[t].rows.push(r);
       if(!grp[t].ncc)grp[t].ncc=tinhNCC[r.huyen]||'';
     });
-    th.innerHTML='<tr><th></th><th>Tỉnh/TP</th><th>NCC</th><th>CH</th><th>KG</th><th>ĐH</th><th>Sale</th><th>Hủy</th><th>%Hủy</th></tr>';
-    var sorted=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg});
-    tb.innerHTML=sorted.map(function(e,i){
+    th.innerHTML='<tr><th>Tỉnh/TP</th><th>NCC</th><th>CH</th><th>KG</th><th>ĐH</th><th>Sale</th><th>Hủy</th><th>%Hủy</th></tr>';
+    tb.innerHTML=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg}).map(function(e){
       var g=e[1],ph=g.sale+g.huy>0?(g.huy/(g.sale+g.huy)*100):0;
-      var rId='recap_'+view+'_'+i;
-      return'<tr onclick="tglRecapRow(\''+rId+'\')" style="cursor:pointer"><td>▶</td><td><b>'+e[0]+'</b></td><td>'+g.ncc.substring(0,25)+'</td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+g.sale.toFixed(1)+'</td><td>'+g.huy.toFixed(1)+'</td><td>'+ph.toFixed(1)+'%</td></tr>'+
-      '<tr id="'+rId+'" style="display:none"><td colspan="9" style="padding:6px 12px;background:#f8f9fa">'+skuSummary(g.rows,view,e[0])+'</td></tr>';
+      return'<tr onclick="filterFCBy(\'tinh\',\''+e[0].replace(/'/g,'\\\'')+'\')" style="cursor:pointer;background:'+(recapFilter.key==='tinh_'+(e[0])?'#e8f0fe':'')+'"><td><b>'+e[0]+'</b></td><td>'+g.ncc.substring(0,25)+'</td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+g.sale.toFixed(1)+'</td><td>'+g.huy.toFixed(1)+'</td><td>'+ph.toFixed(1)+'%</td></tr>';
     }).join('');
   }else if(view==='gdv'){
     var grp={};
     active.forEach(function(r){
       var k=r.qlkv||'?';
-      if(!grp[k])grp[k]={kg:0,dh:0,sale:0,huy:0,stores:new Set(),rows:[]};
+      if(!grp[k])grp[k]={kg:0,dh:0,sale:0,huy:0,stores:new Set()};
       grp[k].kg+=r.kg;grp[k].dh+=r.dh;grp[k].sale+=r.sale_1w;grp[k].huy+=r.huy_1w;grp[k].stores.add(r.store);
-      grp[k].rows.push(r);
     });
-    th.innerHTML='<tr><th></th><th>QLKV</th><th>CH</th><th>KG</th><th>ĐH</th><th>Sale</th><th>Hủy</th><th>%Hủy</th></tr>';
-    var sorted=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg});
-    tb.innerHTML=sorted.map(function(e,i){
+    th.innerHTML='<tr><th>QLKV</th><th>CH</th><th>KG</th><th>ĐH</th><th>Sale</th><th>Hủy</th><th>%Hủy</th></tr>';
+    tb.innerHTML=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg}).map(function(e){
       var g=e[1],ph=g.sale+g.huy>0?(g.huy/(g.sale+g.huy)*100):0;
-      var rId='recap_'+view+'_'+i;
-      return'<tr onclick="tglRecapRow(\''+rId+'\')" style="cursor:pointer"><td>▶</td><td><b>'+e[0]+'</b></td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+g.sale.toFixed(1)+'</td><td>'+g.huy.toFixed(1)+'</td><td>'+ph.toFixed(1)+'%</td></tr>'+
-      '<tr id="'+rId+'" style="display:none"><td colspan="8" style="padding:6px 12px;background:#f8f9fa">'+skuSummary(g.rows,view,e[0])+'</td></tr>';
+      return'<tr onclick="filterFCBy(\'qlkv\',\''+e[0].replace(/'/g,'\\\'')+'\')" style="cursor:pointer;background:'+(recapFilter.key==='qlkv_'+(e[0])?'#e8f0fe':'')+'"><td><b>'+e[0]+'</b></td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+g.sale.toFixed(1)+'</td><td>'+g.huy.toFixed(1)+'</td><td>'+ph.toFixed(1)+'%</td></tr>';
     }).join('');
   }else if(view==='ch'){
     var grp={};
     active.forEach(function(r){
       var k=r.store;
-      if(!grp[k])grp[k]={name:r.name,qlkv:r.qlkv,huyen:r.huyen,hub:r.hub,kg:0,dh:0,sale:0,huy:0,rows:[],ncc:''};
+      if(!grp[k])grp[k]={name:r.name,qlkv:r.qlkv,huyen:r.huyen,kg:0,dh:0,sale:0,huy:0,ncc:''};
       grp[k].kg+=r.kg;grp[k].dh+=r.dh;grp[k].sale+=r.sale_1w;grp[k].huy+=r.huy_1w;
-      grp[k].rows.push(r);
       if(!grp[k].ncc)grp[k].ncc=tinhNCC[r.huyen]||'';
     });
-    th.innerHTML='<tr><th></th><th>CH</th><th>Tên CH</th><th>QLKV</th><th>Tỉnh</th><th>NCC</th><th>KG</th><th>ĐH</th><th>%Hủy</th></tr>';
-    var sorted=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg});
-    tb.innerHTML=sorted.slice(0,200).map(function(e,i){
+    th.innerHTML='<tr><th>CH</th><th>Tên CH</th><th>QLKV</th><th>Tỉnh</th><th>NCC</th><th>KG</th><th>ĐH</th><th>%Hủy</th></tr>';
+    tb.innerHTML=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg}).slice(0,200).map(function(e){
       var g=e[1],ph=g.sale+g.huy>0?(g.huy/(g.sale+g.huy)*100):0;
-      var phTag=ph>CFG.huyBlockPct?'<span class="tag tag-red">'+ph.toFixed(1)+'%</span>':ph>15?'<span class="tag tag-yellow">'+ph.toFixed(1)+'%</span>':'<span class="tag tag-green">'+ph.toFixed(1)+'%</span>';
-      var rId='recap_'+view+'_'+i;
-      return'<tr onclick="tglRecapRow(\''+rId+'\')" style="cursor:pointer"><td>▶</td><td>'+e[0]+'</td><td>'+g.name+'</td><td>'+g.qlkv+'</td><td>'+g.huyen+'</td><td>'+g.ncc.substring(0,20)+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+phTag+'</td></tr>'+
-      '<tr id="'+rId+'" style="display:none"><td colspan="9" style="padding:4px 12px;background:#f8f9fa"><table style="width:100%;font-size:.7rem"><tr style="background:#e9ecef"><th>SKU</th><th>Min</th><th>Sale</th><th>Hủy</th><th>%Hủy</th><th>N</th><th>ĐH</th><th>CAP</th></tr>'+
-      g.rows.map(function(r){return'<tr><td>'+r.sp_name.substring(0,22)+'</td><td>'+r.min_1w+'</td><td>'+r.sale_1w.toFixed(1)+'</td><td>'+r.huy_1w.toFixed(1)+'</td><td>'+(r.pct_huy*100).toFixed(1)+'%</td><td>'+r.n_group+'</td><td>'+r.dh+'</td><td>'+r.cap.toFixed(1)+'</td></tr>'}).join('')+
-      '</table></td></tr>';
+      return'<tr onclick="filterFCBy(\'ch\',\''+e[0].replace(/'/g,'\\\'')+'\')" style="cursor:pointer;background:'+(recapFilter.key==='ch_'+(e[0])?'#e8f0fe':'')+'"><td><b>'+e[0]+'</b></td><td>'+g.name+'</td><td>'+g.qlkv+'</td><td>'+g.huyen+'</td><td>'+g.ncc.substring(0,20)+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+ph.toFixed(1)+'%</td></tr>';
     }).join('');
   }else{
     var grp={};
     active.forEach(function(r){
       var k=r.hub||'NO_HUB';
-      if(!grp[k])grp[k]={name:r.hub_name||k,kg:0,stores:new Set(),ncc:'',rows:[]};
-      grp[k].kg+=r.kg;grp[k].stores.add(r.store);grp[k].rows.push(r);
+      if(!grp[k])grp[k]={name:r.hub_name||k,kg:0,stores:new Set(),ncc:''};
+      grp[k].kg+=r.kg;grp[k].stores.add(r.store);
       if(!grp[k].ncc)grp[k].ncc=tinhNCC[r.huyen]||'';
     });
-    th.innerHTML='<tr><th></th><th>HUB</th><th>Tên</th><th>CH</th><th>KG</th><th>NCC</th><th>MOV</th><th>Đạt?</th></tr>';
-    var sorted=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg});
-    tb.innerHTML=sorted.map(function(e,i){
+    th.innerHTML='<tr><th>HUB</th><th>Tên</th><th>CH</th><th>KG</th><th>NCC</th><th>MOV</th><th>Đạt?</th></tr>';
+    tb.innerHTML=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg}).map(function(e){
       var g=e[1],mov=CFG.mov[g.ncc]?.mov_kg||0;
-      var rId='recap_'+view+'_'+i;
-      return'<tr onclick="tglRecapRow(\''+rId+'\')" style="cursor:pointer"><td>▶</td><td>'+e[0]+'</td><td>'+g.name.substring(0,30)+'</td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.ncc.substring(0,20)+'</td><td>'+(mov||'-')+'</td><td>'+(mov>0?(g.kg>=mov?'✅':'🔴'):'⚪')+'</td></tr>'+
-      '<tr id="'+rId+'" style="display:none"><td colspan="8" style="padding:6px 12px;background:#f8f9fa">'+skuSummary(g.rows,view,e[0])+'</td></tr>';
+      return'<tr onclick="filterFCBy(\'hub\',\''+e[0].replace(/'/g,'\\\'')+'\')" style="cursor:pointer;background:'+(recapFilter.key==='hub_'+(e[0])?'#e8f0fe':'')+'"><td><b>'+e[0]+'</b></td><td>'+g.name.substring(0,30)+'</td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.ncc.substring(0,20)+'</td><td>'+(mov||'-')+'</td><td>'+(mov>0?(g.kg>=mov?'✅':'🔴'):'⚪')+'</td></tr>';
     }).join('');
   }
 
   var tk=active.reduce(function(s,r){return s+r.kg},0);
   var badCnt=active.filter(function(r){return r.risk==='bad'}).length;
-  document.getElementById('recapKpi').innerHTML='<div class="kpi"><div class="val">'+(tk/1000).toFixed(1)+'T</div><div class="lbl">Tổng KG</div></div><div class="kpi"><div class="val">'+active.length+'</div><div class="lbl">Dòng active</div></div><div class="kpi ok"><div class="val">'+new Set(active.map(function(r){return r.store})).size+'</div><div class="lbl">CH active</div></div><div class="kpi bad"><div class="val">'+badCnt+'</div><div class="lbl">🔴 Vượt CAP</div></div>';
+  document.getElementById('recapKpi').innerHTML='<div class="kpi"><div class="val">'+(tk/1000).toFixed(1)+'T</div><div class="lbl">Tổng KG</div></div><div class="kpi"><div class="val">'+active.length+'</div><div class="lbl">Dòng active</div></div><div class="kpi ok"><div class="val">'+new Set(active.map(function(r){return r.store})).size+'</div><div class="lbl">CH active</div></div><div class="kpi bad"><div class="val">'+badCnt+'</div><div class="lbl">🔴 Vượt CAP</div></div>'+
+    (recapFilter.key?'<div style="text-align:center;margin-top:8px"><span class="tag tag-red">🔍 Đang lọc: '+recapFilter.label+'</span> <button class="btn btn-o btn-xs" onclick="clearRecapFilter()">✕ Bỏ lọc</button></div>':'');
 }
 
-function skuSummary(rows,view,key){
-  var skuGrp={};
-  rows.forEach(function(r){
-    var k=r.article;
-    if(!skuGrp[k])skuGrp[k]={name:r.sp_name,kg:0,dh:0,sale:0,huy:0,cnt:0};
-    skuGrp[k].kg+=r.kg;skuGrp[k].dh+=r.dh;skuGrp[k].sale+=r.sale_1w;skuGrp[k].huy+=r.huy_1w;skuGrp[k].cnt++;
-  });
-  var s='<table style="width:100%;font-size:.7rem"><tr style="background:#e9ecef"><th>SKU</th><th>CH</th><th>KG</th><th>ĐH</th><th>%Hủy</th></tr>';
-  Object.entries(skuGrp).sort(function(a,b){return b[1].kg-a[1].kg}).forEach(function(e){
-    var sk=e[1],ph=sk.sale+sk.huy>0?(sk.huy/(sk.sale+sk.huy)*100):0;
-    s+='<tr><td>'+sk.name.substring(0,25)+'</td><td>'+sk.cnt+'</td><td>'+sk.kg.toFixed(1)+'</td><td>'+sk.dh+'</td><td>'+ph.toFixed(1)+'%</td></tr>';
-  });
-  return s+'</table>';
-}
 
-function tglRecapRow(id){
-  var el=document.getElementById(id);
-  if(!el)return;
-  var prev=el.previousElementSibling,arrow=prev?prev.querySelector('td:first-child'):null;
-  el.style.display=el.style.display==='none'?'':'none';
-  if(arrow)arrow.textContent=el.style.display==='none'?'▶':'▼';
-}
+
+
 
 // ============ HUB REVIEW ============
 function renderHubs(){
@@ -741,4 +700,25 @@ document.querySelectorAll('.chip[data-rv]').forEach(function(c){
 init();
 </script>
 </body>
-</html>
+</html
+
+function filterFCBy(type,val){
+  var tinhNCC={};for(var k in NCC_MAP){(NCC_MAP[k].tinh||[]).forEach(function(t){tinhNCC[t]=k})}
+  if(type==='ncc'){
+    // Find all huyen under this NCC
+    var ncc=val,tinhs=NCC_MAP[ncc]?.tinh||[];
+    recapFilter={key:'ncc_'+ncc,label:'NCC: '+ncc.substring(0,30),fn:function(r){return tinhs.indexOf(r.huyen)>=0}};
+  }else if(type==='tinh'){
+    recapFilter={key:'tinh_'+val,label:'Tỉnh: '+val,fn:function(r){return r.huyen===val}};
+  }else if(type==='qlkv'){
+    recapFilter={key:'qlkv_'+val,label:'QLKV: '+val,fn:function(r){return r.qlkv===val}};
+  }else if(type==='ch'){
+    recapFilter={key:'ch_'+val,label:'CH: '+val,fn:function(r){return r.store===val}};
+  }else if(type==='hub'){
+    recapFilter={key:'hub_'+val,label:'HUB: '+val,fn:function(r){return r.hub===val}};
+  }
+  renderFC();switchRecap(recapView);
+}
+
+function clearRecapFilter(){recapFilter={};renderFC();renderRecap();}
+>
