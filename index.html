@@ -65,15 +65,6 @@ tr.row-block{background:#f0f0f0;color:#999;text-decoration:line-through}
 .fbar input:focus{outline:none;border-color:var(--blue)}
 
 /* HUB cards */
-.hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-.hub-card{border:1px solid var(--border);border-radius:6px;padding:10px;font-size:.78rem}
-.hub-card.warn{border-color:var(--orange);background:#fff8e6}
-.hub-card.bad{border-color:var(--red);background:#fff0f0}
-.hub-card .hname{font-weight:600;font-size:.82rem}
-.hub-card .hmeta{font-size:.7rem;color:var(--muted);margin:4px 0}
-.hub-card .hstats{display:flex;gap:8px;font-size:.7rem;margin-top:4px}
-.hub-card .hstats span{padding:2px 6px;background:#f0f0f0;border-radius:3px}
-.hub-card .hacts{margin-top:6px;display:flex;gap:4px;flex-wrap:wrap}
 
 /* Modal */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center}
@@ -173,20 +164,19 @@ select{font-size:.75rem;padding:2px 4px}
     </div>
   </div>
 
-  <!-- FULL WIDTH: HUB REVIEW -->
+  <!-- FULL WIDTH: HUB REVIEW (compact) -->
   <div class="panel panel-full">
     <div class="panel-h">
-      🚚 HUB Review
+      🚚 HUB Review · MOV theo NGÀY
       <span id="hubAlertCount" style="font-weight:400;font-size:.75rem;margin-left:8px"></span>
     </div>
     <div class="panel-b">
       <div class="fbar">
         <button class="chip active" data-hf="all">Tất cả</button>
         <button class="chip" data-hf="bad">🔴 Thiếu MOV</button>
-        <button class="chip" data-hf="warn">🟡 Bất thường</button>
-        <button class="chip" data-hf="big">✂️ Đề xuất tách</button>
+        <button class="chip" data-hf="warn">🟡 Cảnh báo</button>
       </div>
-      <div class="hub-grid" id="hubGrid"></div>
+      <div class="tbl-wrap" style="max-height:40vh"><table id="hubTbl"><thead></thead><tbody></tbody></table></div>
     </div>
   </div>
 </main>
@@ -244,6 +234,7 @@ MIN_CFG={"10626483": {"N3": 2.0, "N4": 2.0, "N5": 2.0, "N6": 2.0, "N7": 4.0, "N8
 DELI_TABLE=[{"stt": 0, "lich_giao": "234567CN", "code": "234567CN_0", "days": {}}, {"stt": 0, "lich_giao": "246CN", "code": "246CN_0", "days": {}}, {"stt": 0, "lich_giao": "246", "code": "246_0", "days": {}}, {"stt": 0, "lich_giao": "357", "code": "357_0", "days": {}}, {"stt": 0, "lich_giao": "46CN", "code": "46CN_0", "days": {}}, {"stt": 1, "lich_giao": "234567CN", "code": "234567CN_1", "days": {"T7": 1}}, {"stt": 2, "lich_giao": "234567CN", "code": "234567CN_2", "days": {"T3": 1, "T7": 1}}, {"stt": 3, "lich_giao": "234567CN", "code": "234567CN_3", "days": {"T3": 1, "T5": 1, "T7": 1}}, {"stt": 4, "lich_giao": "234567CN", "code": "234567CN_4", "days": {"T3": 1, "T5": 1, "T7": 1, "CN": 1}}, {"stt": 5, "lich_giao": "234567CN", "code": "234567CN_5", "days": {"T3": 1, "T5": 1, "T6": 1, "T7": 1, "CN": 1}}, {"stt": 6, "lich_giao": "234567CN", "code": "234567CN_6", "days": {"T3": 1, "T4": 1, "T5": 1, "T6": 1, "T7": 1, "CN": 1}}, {"stt": 7, "lich_giao": "234567CN", "code": "234567CN_7", "days": {"T2": 1, "T3": 1, "T4": 1, "T5": 1, "T6": 1, "T7": 1, "CN": 1}}, {"stt": 8, "lich_giao": "234567CN", "code": "234567CN_8", "days": {"T2": 1, "T3": 1, "T4": 1, "T5": 1, "T6": 1, "T7": 2, "CN": 1}}, {"stt": 9, "lich_giao": "234567CN", "code": "234567CN_9", "days": {"T2": 1, "T3": 2, "T4": 1, "T5": 1, "T6": 1, "T7": 2, "CN": 1}}, {"stt": 10, "lich_giao": "234567CN", "code": "234567CN_10", "days": {"T2": 1, "T3": 2, "T4": 1, "T5": 2, "T6": 1, "T7": 2, "CN": 1}}, {"stt": 11, "lich_giao": "234567CN", "code": "234567CN_11", "days": {"T2": 1, "T3": 2, "T4": 1, "T5": 2, "T6": 1, "T7": 2, "CN": 2}}, {"stt": 12, "lich_giao": "234567CN", "code": "234567CN_12", "days": {"T2": 1, "T3": 2, "T4": 1, "T5": 2, "T6": 2, "T7": 2, "CN": 2}}, {"stt": 13, "lich_giao": "234567CN", "code": "234567CN_13", "days": {"T2": 1, "T3": 2, "T4": 2, "T5": 2, "T6": 2, "T7": 2, "CN": 2}}, {"stt": 14, "lich_giao": "234567CN", "code": "234567CN_14", "days": {"T2": 2, "T3": 2, "T4": 2, "T5": 2, "T6": 2, "T7": 2, "CN": 2}}, {"stt": 15, "lich_giao": "234567CN", "code": "234567CN_15", "days": {"T2": 2, "T3": 2, "T4": 2, "T5": 2, "T6": 2, "T7": 3, "CN": 2}}, {"stt": 16, "lich_giao": "234567CN", "code": "234567CN_16", "days": {"T2": 2, "T3": 3, "T4": 2, "T5": 2, "T6": 2, "T7": 3, "CN": 2}}, {"stt": 17, "lich_giao": "234567CN", "code": "234567CN_17", "days": {"T2": 2, "T3": 3, "T4": 2, "T5": 3, "T6": 2, "T7": 3, "CN": 2}}, {"stt": 18, "lich_giao": "234567CN", "code": "234567CN_18", "days": {"T2": 2, "T3": 3, "T4": 2, "T5": 3, "T6": 2, "T7": 3, "CN": 3}}, {"stt": 19, "lich_giao": "234567CN", "code": "234567CN_19", "days": {"T2": 2, "T3": 3, "T4": 2, "T5": 3, "T6": 3, "T7": 3, "CN": 3}}, {"stt": 20, "lich_giao": "234567CN", "code": "234567CN_20", "days": {"T2": 2, "T3": 3, "T4": 3, "T5": 3, "T6": 3, "T7": 3, "CN": 3}}, {"stt": 21, "lich_giao": "234567CN", "code": "234567CN_21", "days": {"T2": 3, "T3": 3, "T4": 3, "T5": 3, "T6": 3, "T7": 3, "CN": 3}}, {"stt": 22, "lich_giao": "234567CN", "code": "234567CN_22", "days": {"T2": 3, "T3": 3, "T4": 3, "T5": 3, "T6": 3, "T7": 4, "CN": 3}}, {"stt": 23, "lich_giao": "234567CN", "code": "234567CN_23", "days": {"T2": 3, "T3": 4, "T4": 3, "T5": 3, "T6": 3, "T7": 4, "CN": 3}}, {"stt": 24, "lich_giao": "234567CN", "code": "234567CN_24", "days": {"T2": 3, "T3": 4, "T4": 3, "T5": 4, "T6": 3, "T7": 4, "CN": 3}}, {"stt": 25, "lich_giao": "234567CN", "code": "234567CN_25", "days": {"T2": 3, "T3": 4, "T4": 3, "T5": 4, "T6": 3, "T7": 4, "CN": 4}}, {"stt": 26, "lich_giao": "234567CN", "code": "234567CN_26", "days": {"T2": 3, "T3": 4, "T4": 3, "T5": 4, "T6": 4, "T7": 4, "CN": 4}}, {"stt": 27, "lich_giao": "234567CN", "code": "234567CN_27", "days": {"T2": 3, "T3": 4, "T4": 4, "T5": 4, "T6": 4, "T7": 4, "CN": 4}}, {"stt": 28, "lich_giao": "234567CN", "code": "234567CN_28", "days": {"T2": 4, "T3": 4, "T4": 4, "T5": 4, "T6": 4, "T7": 4, "CN": 4}}, {"stt": 29, "lich_giao": "234567CN", "code": "234567CN_29", "days": {"T2": 4, "T3": 4, "T4": 4, "T5": 4, "T6": 4, "T7": 5, "CN": 4}}, {"stt": 30, "lich_giao": "234567CN", "code": "234567CN_30", "days": {"T2": 4, "T3": 5, "T4": 4, "T5": 4, "T6": 4, "T7": 5, "CN": 4}}, {"stt": 31, "lich_giao": "234567CN", "code": "234567CN_31", "days": {"T2": 4, "T3": 5, "T4": 4, "T5": 5, "T6": 4, "T7": 5, "CN": 4}}, {"stt": 32, "lich_giao": "234567CN", "code": "234567CN_32", "days": {"T2": 4, "T3": 5, "T4": 4, "T5": 5, "T6": 4, "T7": 5, "CN": 5}}, {"stt": 33, "lich_giao": "234567CN", "code": "234567CN_33", "days": {"T2": 4, "T3": 5, "T4": 4, "T5": 5, "T6": 5, "T7": 5, "CN": 5}}, {"stt": 34, "lich_giao": "234567CN", "code": "234567CN_34", "days": {"T2": 4, "T3": 5, "T4": 5, "T5": 5, "T6": 5, "T7": 5, "CN": 5}}, {"stt": 35, "lich_giao": "234567CN", "code": "234567CN_35", "days": {"T2": 5, "T3": 5, "T4": 5, "T5": 5, "T6": 5, "T7": 5, "CN": 5}}, {"stt": 36, "lich_giao": "234567CN", "code": "234567CN_36", "days": {"T2": 5, "T3": 5, "T4": 5, "T5": 5, "T6": 5, "T7": 6, "CN": 5}}, {"stt": 37, "lich_giao": "234567CN", "code": "234567CN_37", "days": {"T2": 5, "T3": 6, "T4": 5, "T5": 5, "T6": 5, "T7": 6, "CN": 5}}, {"stt": 38, "lich_giao": "234567CN", "code": "234567CN_38", "days": {"T2": 5, "T3": 6, "T4": 5, "T5": 6, "T6": 5, "T7": 6, "CN": 5}}, {"stt": 39, "lich_giao": "234567CN", "code": "234567CN_39", "days": {"T2": 5, "T3": 6, "T4": 5, "T5": 6, "T6": 5, "T7": 6, "CN": 6}}, {"stt": 40, "lich_giao": "234567CN", "code": "234567CN_40", "days": {"T2": 5, "T3": 6, "T4": 5, "T5": 6, "T6": 6, "T7": 6, "CN": 6}}, {"stt": 41, "lich_giao": "234567CN", "code": "234567CN_41", "days": {"T2": 5, "T3": 6, "T4": 6, "T5": 6, "T6": 6, "T7": 6, "CN": 6}}, {"stt": 42, "lich_giao": "234567CN", "code": "234567CN_42", "days": {"T2": 6, "T3": 6, "T4": 6, "T5": 6, "T6": 6, "T7": 6, "CN": 6}}, {"stt": 43, "lich_giao": "234567CN", "code": "234567CN_43", "days": {"T2": 6, "T3": 6, "T4": 6, "T5": 6, "T6": 6, "T7": 7, "CN": 6}}, {"stt": 44, "lich_giao": "234567CN", "code": "234567CN_44", "days": {"T2": 6, "T3": 7, "T4": 6, "T5": 6, "T6": 6, "T7": 7, "CN": 6}}, {"stt": 45, "lich_giao": "234567CN", "code": "234567CN_45", "days": {"T2": 6, "T3": 7, "T4": 6, "T5": 7, "T6": 6, "T7": 7, "CN": 6}}, {"stt": 46, "lich_giao": "234567CN", "code": "234567CN_46", "days": {"T2": 6, "T3": 7, "T4": 6, "T5": 7, "T6": 6, "T7": 7, "CN": 7}}, {"stt": 47, "lich_giao": "234567CN", "code": "234567CN_47", "days": {"T2": 6, "T3": 7, "T4": 6, "T5": 7, "T6": 7, "T7": 7, "CN": 7}}, {"stt": 48, "lich_giao": "234567CN", "code": "234567CN_48", "days": {"T2": 6, "T3": 7, "T4": 7, "T5": 7, "T6": 7, "T7": 7, "CN": 7}}, {"stt": 49, "lich_giao": "234567CN", "code": "234567CN_49", "days": {"T2": 7, "T3": 7, "T4": 7, "T5": 7, "T6": 7, "T7": 7, "CN": 7}}, {"stt": 50, "lich_giao": "234567CN", "code": "234567CN_50", "days": {"T2": 7, "T3": 7, "T4": 7, "T5": 7, "T6": 7, "T7": 8, "CN": 7}}, {"stt": 51, "lich_giao": "234567CN", "code": "234567CN_51", "days": {"T2": 7, "T3": 8, "T4": 7, "T5": 7, "T6": 7, "T7": 8, "CN": 7}}, {"stt": 52, "lich_giao": "234567CN", "code": "234567CN_52", "days": {"T2": 7, "T3": 8, "T4": 7, "T5": 8, "T6": 7, "T7": 8, "CN": 7}}, {"stt": 53, "lich_giao": "234567CN", "code": "234567CN_53", "days": {"T2": 7, "T3": 8, "T4": 7, "T5": 8, "T6": 7, "T7": 8, "CN": 8}}, {"stt": 54, "lich_giao": "234567CN", "code": "234567CN_54", "days": {"T2": 7, "T3": 8, "T4": 7, "T5": 8, "T6": 8, "T7": 8, "CN": 8}}, {"stt": 55, "lich_giao": "234567CN", "code": "234567CN_55", "days": {"T2": 7, "T3": 8, "T4": 8, "T5": 8, "T6": 8, "T7": 8, "CN": 8}}, {"stt": 56, "lich_giao": "234567CN", "code": "234567CN_56", "days": {"T2": 8, "T3": 8, "T4": 8, "T5": 8, "T6": 8, "T7": 8, "CN": 8}}, {"stt": 57, "lich_giao": "234567CN", "code": "234567CN_57", "days": {"T2": 8, "T3": 8, "T4": 8, "T5": 8, "T6": 8, "T7": 9, "CN": 8}}, {"stt": 58, "lich_giao": "234567CN", "code": "234567CN_58", "days": {"T2": 8, "T3": 9, "T4": 8, "T5": 8, "T6": 8, "T7": 9, "CN": 8}}, {"stt": 59, "lich_giao": "234567CN", "code": "234567CN_59", "days": {"T2": 8, "T3": 9, "T4": 8, "T5": 9, "T6": 8, "T7": 9, "CN": 8}}, {"stt": 60, "lich_giao": "234567CN", "code": "234567CN_60", "days": {"T2": 8, "T3": 9, "T4": 8, "T5": 9, "T6": 8, "T7": 9, "CN": 9}}, {"stt": 61, "lich_giao": "234567CN", "code": "234567CN_61", "days": {"T2": 8, "T3": 9, "T4": 8, "T5": 9, "T6": 9, "T7": 9, "CN": 9}}, {"stt": 62, "lich_giao": "234567CN", "code": "234567CN_62", "days": {"T2": 8, "T3": 9, "T4": 9, "T5": 9, "T6": 9, "T7": 9, "CN": 9}}, {"stt": 63, "lich_giao": "234567CN", "code": "234567CN_63", "days": {"T2": 9, "T3": 9, "T4": 9, "T5": 9, "T6": 9, "T7": 9, "CN": 9}}, {"stt": 64, "lich_giao": "234567CN", "code": "234567CN_64", "days": {"T2": 9, "T3": 9, "T4": 9, "T5": 9, "T6": 9, "T7": 10, "CN": 9}}, {"stt": 65, "lich_giao": "234567CN", "code": "234567CN_65", "days": {"T2": 9, "T3": 10, "T4": 9, "T5": 9, "T6": 9, "T7": 10, "CN": 9}}, {"stt": 66, "lich_giao": "234567CN", "code": "234567CN_66", "days": {"T2": 9, "T3": 10, "T4": 9, "T5": 10, "T6": 9, "T7": 10, "CN": 9}}, {"stt": 67, "lich_giao": "234567CN", "code": "234567CN_67", "days": {"T2": 9, "T3": 10, "T4": 9, "T5": 10, "T6": 9, "T7": 10, "CN": 10}}, {"stt": 68, "lich_giao": "234567CN", "code": "234567CN_68", "days": {"T2": 9, "T3": 10, "T4": 9, "T5": 10, "T6": 10, "T7": 10, "CN": 10}}, {"stt": 69, "lich_giao": "234567CN", "code": "234567CN_69", "days": {"T2": 9, "T3": 10, "T4": 10, "T5": 10, "T6": 10, "T7": 10, "CN": 10}}, {"stt": 70, "lich_giao": "234567CN", "code": "234567CN_70", "days": {"T2": 10, "T3": 10, "T4": 10, "T5": 10, "T6": 10, "T7": 10, "CN": 10}}, {"stt": 71, "lich_giao": "234567CN", "code": "234567CN_71", "days": {"T2": 10, "T3": 10, "T4": 10, "T5": 10, "T6": 10, "T7": 11, "CN": 10}}, {"stt": 72, "lich_giao": "234567CN", "code": "234567CN_72", "days": {"T2": 10, "T3": 11, "T4": 10, "T5": 10, "T6": 10, "T7": 11, "CN": 10}}, {"stt": 73, "lich_giao": "234567CN", "code": "234567CN_73", "days": {"T2": 10, "T3": 11, "T4": 10, "T5": 11, "T6": 10, "T7": 11, "CN": 10}}, {"stt": 74, "lich_giao": "234567CN", "code": "234567CN_74", "days": {"T2": 10, "T3": 11, "T4": 10, "T5": 11, "T6": 10, "T7": 11, "CN": 11}}, {"stt": 75, "lich_giao": "234567CN", "code": "234567CN_75", "days": {"T2": 10, "T3": 11, "T4": 10, "T5": 11, "T6": 11, "T7": 11, "CN": 11}}, {"stt": 76, "lich_giao": "234567CN", "code": "234567CN_76", "days": {"T2": 10, "T3": 11, "T4": 11, "T5": 11, "T6": 11, "T7": 11, "CN": 11}}, {"stt": 77, "lich_giao": "234567CN", "code": "234567CN_77", "days": {"T2": 11, "T3": 11, "T4": 11, "T5": 11, "T6": 11, "T7": 11, "CN": 11}}, {"stt": 78, "lich_giao": "234567CN", "code": "234567CN_78", "days": {"T2": 11, "T3": 11, "T4": 11, "T5": 11, "T6": 11, "T7": 12, "CN": 11}}, {"stt": 79, "lich_giao": "234567CN", "code": "234567CN_79", "days": {"T2": 11, "T3": 12, "T4": 11, "T5": 11, "T6": 11, "T7": 12, "CN": 11}}, {"stt": 80, "lich_giao": "234567CN", "code": "234567CN_80", "days": {"T2": 11, "T3": 12, "T4": 11, "T5": 12, "T6": 11, "T7": 12, "CN": 11}}, {"stt": 81, "lich_giao": "234567CN", "code": "234567CN_81", "days": {"T2": 11, "T3": 12, "T4": 11, "T5": 12, "T6": 11, "T7": 12, "CN": 12}}, {"stt": 82, "lich_giao": "234567CN", "code": "234567CN_82", "days": {"T2": 11, "T3": 12, "T4": 11, "T5": 12, "T6": 12, "T7": 12, "CN": 12}}, {"stt": 83, "lich_giao": "234567CN", "code": "234567CN_83", "days": {"T2": 11, "T3": 12, "T4": 12, "T5": 12, "T6": 12, "T7": 12, "CN": 12}}, {"stt": 84, "lich_giao": "234567CN", "code": "234567CN_84", "days": {"T2": 12, "T3": 12, "T4": 12, "T5": 12, "T6": 12, "T7": 12, "CN": 12}}, {"stt": 85, "lich_giao": "234567CN", "code": "234567CN_85", "days": {"T2": 12, "T3": 12, "T4": 12, "T5": 12, "T6": 12, "T7": 13, "CN": 12}}, {"stt": 86, "lich_giao": "234567CN", "code": "234567CN_86", "days": {"T2": 12, "T3": 13, "T4": 12, "T5": 12, "T6": 12, "T7": 13, "CN": 12}}, {"stt": 87, "lich_giao": "234567CN", "code": "234567CN_87", "days": {"T2": 12, "T3": 13, "T4": 12, "T5": 13, "T6": 12, "T7": 13, "CN": 12}}, {"stt": 88, "lich_giao": "234567CN", "code": "234567CN_88", "days": {"T2": 12, "T3": 13, "T4": 12, "T5": 13, "T6": 12, "T7": 13, "CN": 13}}, {"stt": 89, "lich_giao": "234567CN", "code": "234567CN_89", "days": {"T2": 12, "T3": 13, "T4": 12, "T5": 13, "T6": 13, "T7": 13, "CN": 13}}, {"stt": 90, "lich_giao": "234567CN", "code": "234567CN_90", "days": {"T2": 12, "T3": 13, "T4": 13, "T5": 13, "T6": 13, "T7": 13, "CN": 13}}, {"stt": 91, "lich_giao": "234567CN", "code": "234567CN_91", "days": {"T2": 13, "T3": 13, "T4": 13, "T5": 13, "T6": 13, "T7": 13, "CN": 13}}, {"stt": 92, "lich_giao": "234567CN", "code": "234567CN_92", "days": {"T2": 13, "T3": 13, "T4": 13, "T5": 13, "T6": 13, "T7": 14, "CN": 13}}, {"stt": 93, "lich_giao": "234567CN", "code": "234567CN_93", "days": {"T2": 13, "T3": 14, "T4": 13, "T5": 13, "T6": 13, "T7": 14, "CN": 13}}, {"stt": 94, "lich_giao": "234567CN", "code": "234567CN_94", "days": {"T2": 13, "T3": 14, "T4": 13, "T5": 14, "T6": 13, "T7": 14, "CN": 13}}];
 console.log('Loaded:',ASSORT.length,'SKUs,',Object.keys(NCC_MAP).length,'NCCs,',STORES.length,'stores');
 }
+
 
 
 
@@ -482,145 +473,184 @@ function switchRecap(view){
   recapView=view;
   var th=document.querySelector('#recapTbl thead'),tb=document.querySelector('#recapTbl tbody');
   var active=fcRows.filter(function(r){return!r.block});
-
-  var tinhNCC={};
-  for(var k in NCC_MAP){(NCC_MAP[k].tinh||[]).forEach(function(t){tinhNCC[t]=k})}
+  var tinhNCC={};for(var k in NCC_MAP){(NCC_MAP[k].tinh||[]).forEach(function(t){tinhNCC[t]=k})}
 
   if(view==='ncc'){
     var grp={};
     active.forEach(function(r){
       var ncc=tinhNCC[r.huyen]||'Other';
-      if(!grp[ncc])grp[ncc]={kg:0,dh:0,sale:0,huy:0,stores:new Set()};
+      if(!grp[ncc])grp[ncc]={kg:0,dh:0,sale:0,huy:0,stores:new Set(),rows:[]};
       grp[ncc].kg+=r.kg;grp[ncc].dh+=r.dh;grp[ncc].sale+=r.sale_1w;grp[ncc].huy+=r.huy_1w;grp[ncc].stores.add(r.store);
+      grp[ncc].rows.push(r);
     });
-    th.innerHTML='<tr><th>NCC</th><th>CH</th><th>Tổng KG</th><th>Tổng ĐH</th><th>Sale 1W</th><th>Hủy 1W</th><th>%Hủy</th><th>MOV</th><th>Đạt?</th></tr>';
-    tb.innerHTML=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg}).map(function(e){
+    th.innerHTML='<tr><th></th><th>NCC</th><th>CH</th><th>KG</th><th>ĐH</th><th>Sale</th><th>Hủy</th><th>%Hủy</th><th>MOV</th><th>Đạt?</th></tr>';
+    var sorted=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg});
+    tb.innerHTML=sorted.map(function(e,i){
       var g=e[1],mov=CFG.mov[e[0]]?.mov_kg||0;
       var ph=g.sale+g.huy>0?(g.huy/(g.sale+g.huy)*100):0;
       var mok=mov>0?(g.kg>=mov?'✅':g.kg>=mov*0.8?'🟡':'🔴'):'⚪';
-      return '<tr><td><b>'+e[0].substring(0,40)+'</b></td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+g.sale.toFixed(1)+'</td><td>'+g.huy.toFixed(1)+'</td><td>'+ph.toFixed(1)+'%</td><td>'+(mov||'-')+'</td><td>'+mok+'</td></tr>';
+      var rId='recap_'+view+'_'+i;
+      return'<tr onclick="tglRecapRow(\''+rId+'\')" style="cursor:pointer"><td>▶</td><td><b>'+e[0].substring(0,40)+'</b></td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+g.sale.toFixed(1)+'</td><td>'+g.huy.toFixed(1)+'</td><td>'+ph.toFixed(1)+'%</td><td>'+(mov||'-')+'</td><td>'+mok+'</td></tr>'+
+      '<tr id="'+rId+'" style="display:none"><td colspan="10" style="padding:6px 12px;background:#f8f9fa">'+skuSummary(g.rows,view,e[0])+'</td></tr>';
     }).join('');
   }else if(view==='tinh'){
-    // Tỉnh → drill Huyện
     var grp={};
     active.forEach(function(r){
-      var t=r.huyen||'?'; // huyen field already has "T. Xxx" or "TP. Xxx"
-      if(!grp[t])grp[t]={kg:0,dh:0,sale:0,huy:0,stores:new Set(),ncc:''};
+      var t=r.huyen||'?';
+      if(!grp[t])grp[t]={kg:0,dh:0,sale:0,huy:0,stores:new Set(),ncc:'',rows:[]};
       grp[t].kg+=r.kg;grp[t].dh+=r.dh;grp[t].sale+=r.sale_1w;grp[t].huy+=r.huy_1w;grp[t].stores.add(r.store);
+      grp[t].rows.push(r);
       if(!grp[t].ncc)grp[t].ncc=tinhNCC[r.huyen]||'';
     });
-    th.innerHTML='<tr><th>Tỉnh/TP</th><th>NCC</th><th>Số CH</th><th>KG</th><th>ĐH</th><th>Sale</th><th>Hủy</th><th>%Hủy</th></tr>';
-    tb.innerHTML=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg}).map(function(e){
+    th.innerHTML='<tr><th></th><th>Tỉnh/TP</th><th>NCC</th><th>CH</th><th>KG</th><th>ĐH</th><th>Sale</th><th>Hủy</th><th>%Hủy</th></tr>';
+    var sorted=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg});
+    tb.innerHTML=sorted.map(function(e,i){
       var g=e[1],ph=g.sale+g.huy>0?(g.huy/(g.sale+g.huy)*100):0;
-      return '<tr><td><b>'+e[0]+'</b></td><td>'+g.ncc.substring(0,25)+'</td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+g.sale.toFixed(1)+'</td><td>'+g.huy.toFixed(1)+'</td><td>'+ph.toFixed(1)+'%</td></tr>';
+      var rId='recap_'+view+'_'+i;
+      return'<tr onclick="tglRecapRow(\''+rId+'\')" style="cursor:pointer"><td>▶</td><td><b>'+e[0]+'</b></td><td>'+g.ncc.substring(0,25)+'</td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+g.sale.toFixed(1)+'</td><td>'+g.huy.toFixed(1)+'</td><td>'+ph.toFixed(1)+'%</td></tr>'+
+      '<tr id="'+rId+'" style="display:none"><td colspan="9" style="padding:6px 12px;background:#f8f9fa">'+skuSummary(g.rows,view,e[0])+'</td></tr>';
     }).join('');
   }else if(view==='gdv'){
-    // GĐV → QLKV
-    var gdvGrp={};
-    var storeGdv={};
-    STORES.forEach(function(s){if(s.code&&s.qlkv)storeGdv[s.code]=s.qlkv});
+    var grp={};
     active.forEach(function(r){
-      var gdv=r.qlkv||'?'; // Using QLKV as the grouping (GĐV data not in current store list)
-      if(!gdvGrp[gdv])gdvGrp[gdv]={kg:0,dh:0,sale:0,huy:0,stores:new Set()};
-      gdvGrp[gdv].kg+=r.kg;gdvGrp[gdv].dh+=r.dh;gdvGrp[gdv].sale+=r.sale_1w;gdvGrp[gdv].huy+=r.huy_1w;gdvGrp[gdv].stores.add(r.store);
+      var k=r.qlkv||'?';
+      if(!grp[k])grp[k]={kg:0,dh:0,sale:0,huy:0,stores:new Set(),rows:[]};
+      grp[k].kg+=r.kg;grp[k].dh+=r.dh;grp[k].sale+=r.sale_1w;grp[k].huy+=r.huy_1w;grp[k].stores.add(r.store);
+      grp[k].rows.push(r);
     });
-    th.innerHTML='<tr><th>QLKV</th><th>Số CH</th><th>KG</th><th>ĐH</th><th>Sale</th><th>Hủy</th><th>%Hủy</th></tr>';
-    tb.innerHTML=Object.entries(gdvGrp).sort(function(a,b){return b[1].kg-a[1].kg}).map(function(e){
+    th.innerHTML='<tr><th></th><th>QLKV</th><th>CH</th><th>KG</th><th>ĐH</th><th>Sale</th><th>Hủy</th><th>%Hủy</th></tr>';
+    var sorted=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg});
+    tb.innerHTML=sorted.map(function(e,i){
       var g=e[1],ph=g.sale+g.huy>0?(g.huy/(g.sale+g.huy)*100):0;
-      return '<tr><td>'+e[0]+'</td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+g.sale.toFixed(1)+'</td><td>'+g.huy.toFixed(1)+'</td><td>'+ph.toFixed(1)+'%</td></tr>';
+      var rId='recap_'+view+'_'+i;
+      return'<tr onclick="tglRecapRow(\''+rId+'\')" style="cursor:pointer"><td>▶</td><td><b>'+e[0]+'</b></td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+g.sale.toFixed(1)+'</td><td>'+g.huy.toFixed(1)+'</td><td>'+ph.toFixed(1)+'%</td></tr>'+
+      '<tr id="'+rId+'" style="display:none"><td colspan="8" style="padding:6px 12px;background:#f8f9fa">'+skuSummary(g.rows,view,e[0])+'</td></tr>';
     }).join('');
   }else if(view==='ch'){
-    // CH view → per store, sub by NCC/SKUs
-    var chGrp={};
+    var grp={};
     active.forEach(function(r){
       var k=r.store;
-      if(!chGrp[k])chGrp[k]={name:r.name,qlkv:r.qlkv,huyen:r.huyen,hub:r.hub,kg:0,dh:0,sale:0,huy:0,skus:[],ncc:''};
-      chGrp[k].kg+=r.kg;chGrp[k].dh+=r.dh;chGrp[k].sale+=r.sale_1w;chGrp[k].huy+=r.huy_1w;
-      chGrp[k].skus.push(r.sp_name.substring(0,20)+':'+r.dh);
-      if(!chGrp[k].ncc)chGrp[k].ncc=tinhNCC[r.huyen]||'';
+      if(!grp[k])grp[k]={name:r.name,qlkv:r.qlkv,huyen:r.huyen,hub:r.hub,kg:0,dh:0,sale:0,huy:0,rows:[],ncc:''};
+      grp[k].kg+=r.kg;grp[k].dh+=r.dh;grp[k].sale+=r.sale_1w;grp[k].huy+=r.huy_1w;
+      grp[k].rows.push(r);
+      if(!grp[k].ncc)grp[k].ncc=tinhNCC[r.huyen]||'';
     });
-    th.innerHTML='<tr><th>CH</th><th>Tên CH</th><th>QLKV</th><th>Tỉnh</th><th>NCC</th><th>KG</th><th>ĐH</th><th>%Hủy</th><th>SKUs</th></tr>';
-    tb.innerHTML=Object.entries(chGrp).sort(function(a,b){return b[1].kg-a[1].kg}).slice(0,200).map(function(e){
+    th.innerHTML='<tr><th></th><th>CH</th><th>Tên CH</th><th>QLKV</th><th>Tỉnh</th><th>NCC</th><th>KG</th><th>ĐH</th><th>%Hủy</th></tr>';
+    var sorted=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg});
+    tb.innerHTML=sorted.slice(0,200).map(function(e,i){
       var g=e[1],ph=g.sale+g.huy>0?(g.huy/(g.sale+g.huy)*100):0;
       var phTag=ph>CFG.huyBlockPct?'<span class="tag tag-red">'+ph.toFixed(1)+'%</span>':ph>15?'<span class="tag tag-yellow">'+ph.toFixed(1)+'%</span>':'<span class="tag tag-green">'+ph.toFixed(1)+'%</span>';
-      return '<tr><td>'+e[0]+'</td><td>'+g.name+'</td><td>'+g.qlkv+'</td><td>'+g.huyen+'</td><td>'+g.ncc.substring(0,20)+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+phTag+'</td><td style="font-size:.68rem;max-width:200px;overflow:hidden;text-overflow:ellipsis" title="'+g.skus.join(', ')+'">'+g.skus.join(', ')+'</td></tr>';
+      var rId='recap_'+view+'_'+i;
+      return'<tr onclick="tglRecapRow(\''+rId+'\')" style="cursor:pointer"><td>▶</td><td>'+e[0]+'</td><td>'+g.name+'</td><td>'+g.qlkv+'</td><td>'+g.huyen+'</td><td>'+g.ncc.substring(0,20)+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.dh+'</td><td>'+phTag+'</td></tr>'+
+      '<tr id="'+rId+'" style="display:none"><td colspan="9" style="padding:4px 12px;background:#f8f9fa"><table style="width:100%;font-size:.7rem"><tr style="background:#e9ecef"><th>SKU</th><th>Min</th><th>Sale</th><th>Hủy</th><th>%Hủy</th><th>N</th><th>ĐH</th><th>CAP</th></tr>'+
+      g.rows.map(function(r){return'<tr><td>'+r.sp_name.substring(0,22)+'</td><td>'+r.min_1w+'</td><td>'+r.sale_1w.toFixed(1)+'</td><td>'+r.huy_1w.toFixed(1)+'</td><td>'+(r.pct_huy*100).toFixed(1)+'%</td><td>'+r.n_group+'</td><td>'+r.dh+'</td><td>'+r.cap.toFixed(1)+'</td></tr>'}).join('')+
+      '</table></td></tr>';
     }).join('');
   }else{
-    // HUB view
     var grp={};
     active.forEach(function(r){
       var k=r.hub||'NO_HUB';
-      if(!grp[k])grp[k]={name:r.hub_name||k,kg:0,stores:new Set(),ncc:''};
-      grp[k].kg+=r.kg;grp[k].stores.add(r.store);
+      if(!grp[k])grp[k]={name:r.hub_name||k,kg:0,stores:new Set(),ncc:'',rows:[]};
+      grp[k].kg+=r.kg;grp[k].stores.add(r.store);grp[k].rows.push(r);
       if(!grp[k].ncc)grp[k].ncc=tinhNCC[r.huyen]||'';
     });
+    th.innerHTML='<tr><th></th><th>HUB</th><th>Tên</th><th>CH</th><th>KG</th><th>NCC</th><th>MOV</th><th>Đạt?</th></tr>';
     var sorted=Object.entries(grp).sort(function(a,b){return b[1].kg-a[1].kg});
-    th.innerHTML='<tr><th>HUB</th><th>Tên</th><th>CH</th><th>KG</th><th>NCC</th><th>MOV</th><th>Đạt?</th></tr>';
-    tb.innerHTML=sorted.map(function(e){
+    tb.innerHTML=sorted.map(function(e,i){
       var g=e[1],mov=CFG.mov[g.ncc]?.mov_kg||0;
-      return '<tr><td>'+e[0]+'</td><td>'+g.name.substring(0,30)+'</td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.ncc.substring(0,20)+'</td><td>'+(mov||'-')+'</td><td>'+(mov>0?(g.kg>=mov?'✅':'🔴'):'⚪')+'</td></tr>';
+      var rId='recap_'+view+'_'+i;
+      return'<tr onclick="tglRecapRow(\''+rId+'\')" style="cursor:pointer"><td>▶</td><td>'+e[0]+'</td><td>'+g.name.substring(0,30)+'</td><td>'+g.stores.size+'</td><td>'+g.kg.toFixed(1)+'</td><td>'+g.ncc.substring(0,20)+'</td><td>'+(mov||'-')+'</td><td>'+(mov>0?(g.kg>=mov?'✅':'🔴'):'⚪')+'</td></tr>'+
+      '<tr id="'+rId+'" style="display:none"><td colspan="8" style="padding:6px 12px;background:#f8f9fa">'+skuSummary(g.rows,view,e[0])+'</td></tr>';
     }).join('');
   }
 
-  // KPI
   var tk=active.reduce(function(s,r){return s+r.kg},0);
   var badCnt=active.filter(function(r){return r.risk==='bad'}).length;
   document.getElementById('recapKpi').innerHTML='<div class="kpi"><div class="val">'+(tk/1000).toFixed(1)+'T</div><div class="lbl">Tổng KG</div></div><div class="kpi"><div class="val">'+active.length+'</div><div class="lbl">Dòng active</div></div><div class="kpi ok"><div class="val">'+new Set(active.map(function(r){return r.store})).size+'</div><div class="lbl">CH active</div></div><div class="kpi bad"><div class="val">'+badCnt+'</div><div class="lbl">🔴 Vượt CAP</div></div>';
 }
 
+function skuSummary(rows,view,key){
+  var skuGrp={};
+  rows.forEach(function(r){
+    var k=r.article;
+    if(!skuGrp[k])skuGrp[k]={name:r.sp_name,kg:0,dh:0,sale:0,huy:0,cnt:0};
+    skuGrp[k].kg+=r.kg;skuGrp[k].dh+=r.dh;skuGrp[k].sale+=r.sale_1w;skuGrp[k].huy+=r.huy_1w;skuGrp[k].cnt++;
+  });
+  var s='<table style="width:100%;font-size:.7rem"><tr style="background:#e9ecef"><th>SKU</th><th>CH</th><th>KG</th><th>ĐH</th><th>%Hủy</th></tr>';
+  Object.entries(skuGrp).sort(function(a,b){return b[1].kg-a[1].kg}).forEach(function(e){
+    var sk=e[1],ph=sk.sale+sk.huy>0?(sk.huy/(sk.sale+sk.huy)*100):0;
+    s+='<tr><td>'+sk.name.substring(0,25)+'</td><td>'+sk.cnt+'</td><td>'+sk.kg.toFixed(1)+'</td><td>'+sk.dh+'</td><td>'+ph.toFixed(1)+'%</td></tr>';
+  });
+  return s+'</table>';
+}
+
+function tglRecapRow(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  var prev=el.previousElementSibling,arrow=prev?prev.querySelector('td:first-child'):null;
+  el.style.display=el.style.display==='none'?'':'none';
+  if(arrow)arrow.textContent=el.style.display==='none'?'▶':'▼';
+}
+
 // ============ HUB REVIEW ============
 function renderHubs(){
-  var hubGrp={};
+  var DAYS=['T2','T3','T4','T5','T6','T7','CN'];
+  var tinhNCC={};for(var k in NCC_MAP){(NCC_MAP[k].tinh||[]).forEach(function(t){tinhNCC[t]=k})}
+
+  // Aggregate HUB × day
+  var hubDay={};
   fcRows.forEach(function(r){
-    var k=r.hub||'NO_HUB';
-    if(!hubGrp[k])hubGrp[k]={name:r.hub_name||k,rows:[],kg:0,ncc:'',mode:'HUB'};
-    hubGrp[k].rows.push(r);hubGrp[k].kg+=r.kg;
-    if(!hubGrp[k].ncc){
-      for(var n in NCC_MAP){if((NCC_MAP[n].tinh||[]).indexOf(r.huyen)>=0){hubGrp[k].ncc=n;break}}
-    }
+    if(r.block)return;
+    var h=r.hub||'NO_HUB';
+    if(!hubDay[h])hubDay[h]={name:r.hub_name||h,ncc:''};
+    if(!hubDay[h].ncc)hubDay[h].ncc=tinhNCC[r.huyen]||'';
+    DAYS.forEach(function(d){if(!hubDay[h][d])hubDay[h][d]=0;});
+    var dkg=r.kg/7;DAYS.forEach(function(d){hubDay[h][d]+=dkg});
   });
 
-  var alerts=[],totBad=0,totWarn=0,totSplit=0;
-  Object.entries(hubGrp).forEach(function(e){
-    var k=e[0],h=e[1],mov=CFG.mov[h.ncc]?.mov_kg||0;
-    var iss=[],severity='ok';
-    if(mov>0&&h.kg<mov){iss.push('Thiếu MOV: '+(h.kg).toFixed(0)+'/'+mov+' KG');severity='bad';totBad++}
-    if(mov>0&&h.kg>mov*CFG.splitFactor){iss.push('Có thể tách: '+(h.kg).toFixed(0)+' KG');severity=severity==='bad'?'bad':'warn';totSplit++}
-    var huyStores=h.rows.filter(function(r){return r.pct_huy>CFG.huyBlockPct/100});
-    if(huyStores.length>0){iss.push(huyStores.length+' CH hủy >'+CFG.huyBlockPct+'%');totWarn++}
-    if(iss.length)alerts.push({key:k,severity:severity,issues:iss,name:h.name,kg:h.kg,ncc:h.ncc,mov:mov,rows:h.rows});
+  var alerts=[];
+  Object.entries(hubDay).forEach(function(e){
+    var h=e[1],mov=CFG.mov[h.ncc]?.mov_kg||0;
+    var badDays=[],warnDays=[],okDays=[];
+    DAYS.forEach(function(d){
+      if(mov>0&&h[d]>=mov)okDays.push(d);
+      else if(mov>0&&h[d]>=mov*0.8)warnDays.push(d);
+      else if(mov>0)badDays.push(d);
+    });
+    if(badDays.length||warnDays.length)alerts.push({key:e[0],name:h.name,ncc:h.ncc,mov:mov,badDays:badDays,warnDays:warnDays,okDays:okDays,byDay:h});
   });
 
-  document.getElementById('hubAlertCount').textContent='⚠️ '+alerts.length+' HUB cần chú ý';
+  // Sort: most bad days first
+  alerts.sort(function(a,b){return b.badDays.length-a.badDays.length||b.warnDays.length-a.warnDays.length});
 
   var disp=alerts;
-  if(activeHubFilter==='bad')disp=alerts.filter(function(a){return a.severity==='bad'});
-  else if(activeHubFilter==='warn')disp=alerts.filter(function(a){return a.severity!='bad'});
-  else if(activeHubFilter==='big')disp=alerts.filter(function(a){return a.issues.some(function(i){return i.indexOf('tách')>=0})});
+  if(activeHubFilter==='bad')disp=alerts.filter(function(a){return a.badDays.length});
+  else if(activeHubFilter==='warn')disp=alerts.filter(function(a){return !a.badDays.length&&a.warnDays.length});
 
-  var grid=document.getElementById('hubGrid');
-  if(!disp.length){grid.innerHTML='<div style="color:var(--muted);padding:20px;text-align:center">✅ Không có HUB bất thường</div>';return}
+  document.getElementById('hubAlertCount').textContent=alerts.length?'⚠️ '+alerts.length+' HUB cần chú ý':'✅ Tất cả HUB đủ MOV';
 
-  grid.innerHTML=disp.map(function(a){
-    var cls=a.severity==='bad'?'bad':'warn';
-    return '<div class="hub-card '+cls+'">'+
-      '<div class="hname">🏢 '+a.name+'</div>'+
-      '<div class="hmeta">📦 '+a.kg.toFixed(1)+' KG · '+a.rows.length+' dòng · NCC: '+(a.ncc?a.ncc.substring(0,25):'?')+' · MOV: '+(a.mov||'-')+' KG</div>'+
-      '<div class="hstats">'+a.issues.map(function(i){return '<span>'+i+'</span>'}).join('')+'</div>'+
-      '<div class="hacts">'+
-        (a.issues.some(function(i){return i.indexOf('tách')>=0})?'<button class="btn btn-o btn-xs" onclick="toast(\'Tính năng tách HUB đang phát triển\')">✂️ Tách HUB</button>':'')+
-        '<button class="btn btn-o btn-xs" onclick="blockHubStores(\''+a.key+'\')">🚫 Block CH hủy cao</button>'+
-      '</div></div>';
+  var th=document.getElementById('hubTbl').querySelector('thead');
+  th.innerHTML='<tr><th>HUB</th><th>Tên</th><th>NCC</th><th>MOV</th><th>'+DAYS.map(function(d){return d}).join('</th><th>')+'</th><th>Trạng thái</th></tr>';
+
+  var tb=document.getElementById('hubTbl').querySelector('tbody');
+  if(!disp.length){tb.innerHTML='<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:16px">✅ Tất cả HUB đủ MOV các ngày</td></tr>';return}
+
+  tb.innerHTML=disp.map(function(a){
+    var dayCells=DAYS.map(function(d){
+      var kg=a.byDay[d]||0;
+      var m=a.mov||0;
+      var cls='';
+      if(m>0&&kg>=m)cls='tag-green';
+      else if(m>0&&kg>=m*0.8)cls='tag-yellow';
+      else if(m>0)cls='tag-red';
+      return'<td><span class="tag '+(cls?'tag '+cls:'')+'">'+kg.toFixed(1)+'</span></td>';
+    }).join('');
+    var totalBad=a.badDays.length+a.warnDays.length;
+    var st=totalBad===0?'<span class="tag tag-green">✅ Đủ</span>':a.badDays.length?'<span class="tag tag-red">🔴 '+a.badDays.length+' ngày thiếu</span>':'<span class="tag tag-yellow">🟡 '+a.warnDays.length+' ngày yếu</span>';
+    return'<tr><td>'+a.key+'</td><td>'+a.name.substring(0,25)+'</td><td>'+a.ncc.substring(0,20)+'</td><td>'+(a.mov||'-')+'</td>'+dayCells+'<td>'+st+'</td></tr>';
   }).join('');
 }
 
-function blockHubStores(hubKey){
-  var cnt=0;
-  fcRows.forEach(function(r){if((r.hub||'NO_HUB')===hubKey&&r.pct_huy>CFG.huyBlockPct/100){r.block=1;r.dh=0;r.risk='zero';cnt++}});
-  renderAll();toast('🚫 Block '+cnt+' CH trong HUB','ok');
-}
-
-// ============ EXPORT ============
 function exportAll(){
   if(!fcRows.length){toast('Chưa có dữ liệu! Chạy FC trước.','err');return}
   var wb=XLSX.utils.book_new();
